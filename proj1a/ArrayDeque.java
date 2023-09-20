@@ -76,7 +76,7 @@ public class ArrayDeque<T> {
     }
 
     public void addFirst(T item){
-        if(size == len){
+        if(size == len - 1){
             resize();
         }
         front = minusOne(front);
@@ -85,7 +85,7 @@ public class ArrayDeque<T> {
     }
 
     public void addLast(T item){
-        if(size == len){
+        if(size == len - 1){
             resize();
         }
         arr[tail] = item;
