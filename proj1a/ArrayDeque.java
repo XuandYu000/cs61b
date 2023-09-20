@@ -35,7 +35,7 @@ public class ArrayDeque<T> {
         return index + 1;
     }
 
-    public void resize(){
+    private void resize(){
         int newlen = len << 1;
         T[] newArray = (T[]) new Object[newlen];
         int ptr1 = front;
@@ -51,7 +51,7 @@ public class ArrayDeque<T> {
         len = newlen;
     }
 
-    public void shrink(){
+    private void shrink(){
         int newlen = len >> 1;
         T[] newArray = (T[]) new Object[newlen];
         int ptr1 = front;
