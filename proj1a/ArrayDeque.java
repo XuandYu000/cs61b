@@ -110,6 +110,9 @@ public class ArrayDeque<T> {
         if(len >= 16 && len / size >= 4){
             shrink();
         }
+        if(size == 0){
+            return null;
+        }
         tail = minusOne(tail);
         size --;
         return arr[tail];
