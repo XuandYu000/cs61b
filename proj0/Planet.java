@@ -1,14 +1,14 @@
 public class Planet {
     // declare the constant
-    static final double G = 6.67e-11;
+    private static final double G = 6.67e-11;
 
 
-    double xxPos;
-    double yyPos;
-    double xxVel;
-    double yyVel;
-    double mass;
-    String imgFileName;
+    public double xxPos;
+    public double yyPos;
+    public double xxVel;
+    public double yyVel;
+    public double mass;
+    public String imgFileName;
 
     // Constructor
     public Planet(double xP, double yP, double xV,
@@ -19,8 +19,9 @@ public class Planet {
 
     // Constructor
     public Planet(Planet p) {
-        xxPos = p.xxPos; yyPos = p.yyPos; xxVel = p.xxVel;
-        yyVel = p.yyVel; mass = p.mass; imgFileName = p.imgFileName;
+        // xxPos = p.xxPos; yyPos = p.yyPos; xxVel = p.xxVel;
+        // yyVel = p.yyVel; mass = p.mass; imgFileName = p.imgFileName;
+        this(p.xxPos, p.yyPos, p.xxVel, p.yyVel, p.mass, p.imgFileName);
     }
 
     // distance between two planets
@@ -31,7 +32,7 @@ public class Planet {
     }
 
     // the square the distance
-    public double squaredDistance(Planet planet){
+    private double squaredDistance(Planet planet){
         return calcDistance(planet) * calcDistance(planet);
     }
     
@@ -81,5 +82,10 @@ public class Planet {
             yyVel += dt * ay;
             xxPos += dt * xxVel;
             yyPos += dt * yyVel;
+    }
+
+    // Drawing One Planet
+    public void draw(){
+        StdDraw.picture(xxPos, yyPos, imgFileName);
     }
 }
