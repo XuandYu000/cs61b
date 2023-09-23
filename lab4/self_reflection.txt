@@ -4,27 +4,27 @@ ArrayDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: I should create a new method in my Node class so that I can make the Insert methods clear. 
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: I tried my best to make my code clear and elegant.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: In the ArrayDeque.java, sometimes, I even couldn't understand the code even though I pass the test.
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
-A:
+A: The pointers, front and tail, have different means in the ArrayDeque. After learning that, I found that it's easy to code.
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A: As the question above one.
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A: I will try to think a different way to resize the array in a smarter way.
 
 -----
 
@@ -32,23 +32,23 @@ LinkedListDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: I needn't add a pointer which points to the tail of the List beacause the front of the sentinel is the tail of the List.
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: In my code, I clarified the order of adding and deleting nodes in a doubly linked list.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: Maybe there is a better way to the constractor.
 
 Q: What did you learn by talking to your partner about writing LinkedListDeque?
 
-A:
+A: As the first problem above.
 
 Q: What do you wish you would have known before writing LinkedListDeque, if anything?
 
-A:
+A: 
 
 Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
 
