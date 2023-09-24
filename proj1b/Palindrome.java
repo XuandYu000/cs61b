@@ -18,6 +18,7 @@ public class Palindrome {
                 return false;
             }
         }
+        return true;
     }
 
     public boolean isPalindrome(String word, CharacterComparator cc){
