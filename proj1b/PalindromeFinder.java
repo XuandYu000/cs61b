@@ -7,12 +7,12 @@ public class PalindromeFinder {
 
         while (!in.isEmpty()) {
             String word = in.readString();
-            if (word.length() >= minLength && palindrome.isPalindrome(word)) {
-                System.out.println(word);
-            }
-//              if (word.length() >= minLength && palindrome.isPalindrome(word, new OffByOne())){
-//                  System.out.println(word);
-//              }
+//            if (word.length() >= minLength && palindrome.isPalindrome(word)) {
+//                System.out.println(word);
+//            }
+              if (word.length() >= minLength && palindrome.isPalindrome(word, new OffByOne())){
+                  System.out.println(word);
+              }
         }
     }
 }
