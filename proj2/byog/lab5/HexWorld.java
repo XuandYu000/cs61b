@@ -86,5 +86,47 @@ public class HexWorld {
         assertEquals(-1, hexRowOffset(2, 2));
         assertEquals(0, hexRowOffset(2, 3));
     }
+    private static TETile randomTile() {
+        int tileNum = RANDOM.nextInt(3);
+        switch (tileNum) {
+            case 0: return Tileset.WALL;
+            case 1: return Tileset.FLOWER;
+            case 2: return Tileset.GRASS;
+            default: return Tileset.SAND;
+        }
+    }
+
+    public static void add_hexagons(TETile[][] hexagons, Pos p, int s) {
+        int val_x = (s << 1) - 1;
+        int val_y = s;
+        int[] num = {3, 4, 5, 4, 3};
+        int[] offSet = {-2, -1, 0, 1, 2};
+        for(int i = 0; i < 5; i++) {
+            Pos top = new Pos(p.x + offSet[i] * val_x, p.y - Math.abs(offSet[i] * val_y));
+            addHexagon(hexagons, top, s, randomTile());
+            for(int j = 0; j < num[i]; j++) {
+                Pos now = new Pos(top.x, top.y - j * (val_y << 1));
+                addHexagon(hexagons, now, s, randomTile());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int s = 3;
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+
+        TETile[][] hexagons = new TETile[WIDTH][HEIGHT];
+        for(int i = 0; i < WIDTH; i++) {
+            for(int j = 0; j < HEIGHT; j++) {
+                hexagons[i][j] = Tileset.NOTHING;
+            }
+        }
+
+        Pos p = new Pos(40, 70);
+        add_hexagons(hexagons, p, s);
+//        addHexagon(hexagons, p, s, randomTile());
+        ter.renderFrame(hexagons);
+    }
 }
 
