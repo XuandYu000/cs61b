@@ -1,7 +1,6 @@
 // Done: Make sure to make this class a part of the synthesizer package
 package synthesizer;
 
-import org.junit.Test;
 
 import java.util.Iterator;
 
