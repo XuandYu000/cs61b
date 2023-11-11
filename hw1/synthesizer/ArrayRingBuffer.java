@@ -37,7 +37,7 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T>{
     /**
      * get the next index in the ring buffer
     */
-    public int get_next(int now) {
+    private int get_next(int now) {
         return (now + 1) % this.capacity;
     }
 
@@ -81,6 +81,9 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T>{
      */
     public T peek() {
         // TODO: Return the first item. None of your instance variables should change.
+        if(isEmpty()) {
+            throw new RuntimeException("Ring buffer underflow");
+        }
         return rb[this.first];
     }
 

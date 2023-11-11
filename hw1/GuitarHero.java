@@ -1,10 +1,11 @@
 /**
  * @author Xu Zhiyu
  * @date 2023/11/11 下午1:41
- * @desciption: Allowing the user (you!) to interactively play sounds using the synthesizer package’s GuitarString class.
+ * @desciption: Allowing the user (you!) to interactively play sounds using the
+ * synthesizer package’s GuitarString class.
  */
 import edu.princeton.cs.algs4.StdAudio;
-import synthesizer.*;
+import synthesizer.GuitarString;
 public class GuitarHero {
     private static final double CONCETY = 440.0;
     private static final String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
@@ -15,7 +16,7 @@ public class GuitarHero {
 
     private static double sumSample(GuitarString[] string) {
         double ans = 0;
-        for(int i = 0, siz = string.length; i < siz; i ++) {
+        for (int i = 0, siz = string.length; i < siz; i++) {
             ans += string[i].sample();
         }
         return ans;
