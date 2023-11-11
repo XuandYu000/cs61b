@@ -2,6 +2,9 @@
 package synthesizer;
 
 import org.junit.Test;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 //TODO: Make sure to make this class and all of its methods public
@@ -47,6 +50,9 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T>{
      */
     public void enqueue(T x) {
         // TODO: Enqueue the item. Don't forget to increase fillCount and update last.
+        if(isFull()) {
+            throw new RuntimeException("Ring buffer overflow");
+        }
         this.fillCount += 1;
         rb[this.last] = x;
         this.last = get_next(last);
@@ -61,6 +67,9 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T>{
      */
     public T dequeue() {
         // TODO: Dequeue the first item. Don't forget to decrease fillCount and update
+        if(isEmpty()) {
+            throw new RuntimeException("Ring buffer underflow");
+        }
         this.fillCount -= 1;
         T res = rb[this.first];
         this.first = get_next(first);
@@ -77,4 +86,28 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T>{
 
 
     // TODO: When you get to part 5, implement the needed code to support iteration.
+    private class ArrayRingBufferIterator implements Iterator<T> {
+        private int now;
+        private int curNum;
+        public ArrayRingBufferIterator() {
+            now = first;
+            curNum = 0;
+        }
+
+        public boolean hasNext() {
+            return curNum < fillCount;
+        }
+
+        public T next() {
+            T retValue = rb[now];
+            now = get_next(now);
+            curNum++;
+            return retValue;
+        }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayRingBufferIterator();
+    }
 }

@@ -1,11 +1,11 @@
 package synthesizer;
-
+import java.util.Iterator;
 /**
  * @author Xu Zhiyu
  * @date 2023/11/10 下午3:58
  * @desciption: an interface which declares all the methods that must be implemented by any class that implements BoundedQueue
  */
-public interface BoundedQueue<T> {
+public interface BoundedQueue<T> extends Iterable<T>{
     int capacity();     // return size of the buffer
     int fillCount();    // return number of items currently in the buffer
     void enqueue(T x);  // add item x to the end
