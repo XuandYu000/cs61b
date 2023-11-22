@@ -58,6 +58,12 @@ public class HexWorld {
         }
     }
 
+    public static void addRectangular(TETile[][] world, Pos p, int width, int height, TETile t) {
+        for(int i = p.y; i < p.y + height; i++) {
+            Pos rowStartP = new Pos(p.x, i);
+            addRow(world, rowStartP, width, t);
+        }
+    }
 
     @Test
     public void testHexRowWidth() {
@@ -125,6 +131,7 @@ public class HexWorld {
 
         Pos p = new Pos(40, 70);
         add_hexagons(hexagons, p, s);
+        addRectangular(hexagons, new Pos(10,10), 10, 10, Tileset.GRASS);
 //        addHexagon(hexagons, p, s, randomTile());
         ter.renderFrame(hexagons);
     }
