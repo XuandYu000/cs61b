@@ -6,8 +6,14 @@ import byog.TileEngine.TETile;
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    private static final int WIDTH = 80;
+    private static final int HEIGHT = 30;
+    private static final int ENTRYX = 40;
+    private static final int ENTRYY = 5;
+    private static final String NORTH = "w";
+    private static final String EAST = "d";
+    private static final String WEST = "a";
+    private static final String SOUTH = "s";
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -33,6 +39,8 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
 
         TETile[][] finalWorldFrame = null;
+
+
         return finalWorldFrame;
     }
 }

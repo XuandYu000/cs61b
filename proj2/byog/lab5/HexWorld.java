@@ -92,6 +92,22 @@ public class HexWorld {
         assertEquals(-1, hexRowOffset(2, 2));
         assertEquals(0, hexRowOffset(2, 3));
     }
+
+    @Test
+    public void testPrintChar() {
+        TETile[][] graph = new TETile[WIDTH][HEIGHT];
+        for(int i = 0; i < WIDTH; i++) {
+            for(int j = 0; j < HEIGHT; j++) {
+                graph[i][j] = Tileset.GRASS;
+            }
+        }
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                System.out.print(graph[i][j].character());
+            }
+            System.out.println();
+        }
+    }
     private static TETile randomTile() {
         int tileNum = RANDOM.nextInt(3);
         switch (tileNum) {
