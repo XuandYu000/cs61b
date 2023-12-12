@@ -52,15 +52,17 @@ public class WorldGenerator {
     }
 
     // Returns a world generated with given random seed
-    private void generate() {
+    TETile[][] generate() {
         initial();
         Position[] positions = RandomPositions(MaxRoomWidth, MaxRoomHeight, initialP, North);
-        if(positions == null) return ;
+        if(positions == null) return null;
         Position bottomLeft = positions[0], topRight = positions[1];
         makeRoom(bottomLeft, topRight);
         world[initialP.getX()][initialP.getY()] = Tileset.LOCKED_DOOR;
 
         triExit(bottomLeft, topRight, North);
+
+        return world;
     }
 
     /*Returns random positions for a new room on the given direction of entryPosition if available,

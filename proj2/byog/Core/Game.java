@@ -2,6 +2,12 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
+import byog.lab5.HexWorld;
+import byog.lab5.Pos;
+import org.junit.Test;
+
+import java.util.Scanner;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -14,6 +20,13 @@ public class Game {
     private static final String EAST = "d";
     private static final String WEST = "a";
     private static final String SOUTH = "s";
+
+    private TETile[][] world;
+    private boolean SetUp = true;
+    private boolean NewGameMode = false;
+    private int PlayX;
+    private int PlayY;
+    private String Seed = "";
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -37,10 +50,143 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
+        DealString(input);
+        return world;
+    }
 
-        TETile[][] finalWorldFrame = null;
+    // Recursively deal with the input.
+    private void DealString(String input) {
+        if(input == null) {
+            System.out.println("No input given!");
+            System.exit(0);
+        }
 
+        String word = Character.toString(input.charAt(0));
+        word = word.toLowerCase();
+        DealWord(word);
 
-        return finalWorldFrame;
+        if(input.length() > 1) {
+            input = input.substring(1);
+            DealString(input);
+        }
+    }
+
+    // This flag tells we are generating a new world.
+    private void SwitchNewGame() {
+        NewGameMode = !NewGameMode;
+    }
+
+    // SetUp finished
+    private void SwitchSetUp() {
+        SetUp = !SetUp;
+    }
+
+    // Finish extracting the random seed and generate the world.
+    private void SetUpNewGame() {
+        if(!NewGameMode) {
+            String error = "Input string " + "\"S\" given, but no game has been initialized.\n"
+                    + "Please initialize game first by input string \"N\" and following random seed"
+                    + "numbers";
+            System.out.println(error);
+            System.exit(0);
+        }
+        SwitchNewGame();
+
+        // creat the world
+        Long seed = Long.parseLong(Seed);
+        WorldGenerator wg = new WorldGenerator(WIDTH, HEIGHT, ENTRYX, ENTRYY, seed);
+        world = wg.generate();
+
+        // set up the player
+        PlayX = ENTRYX;
+        PlayY = ENTRYY + 1;
+        world[PlayX][PlayY] = Tileset.PLAYER;
+
+        // Setup finished
+        SwitchSetUp();
+    }
+
+    private boolean Accessible(int x, int y) {
+        if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) { return false;}
+        if(world[x][y].equals(Tileset.WALL)) {return false;}
+        return true;
+    }
+
+    private void Move(String dir) {
+        Position last = new Position(PlayX, PlayY);
+
+        switch (dir){
+            case NORTH :{
+                PlayY ++;
+                break;
+            }
+            case SOUTH: {
+                PlayY --;
+                break;
+            }
+            case EAST: {
+                PlayX ++;
+                break;
+            }
+            case WEST: {
+                PlayX --;
+                break;
+            }
+            default:
+        }
+        if(Accessible(PlayX, PlayY)) {
+            world[last.getX()][last.getY()] = Tileset.FLOOR;
+            world[PlayX][PlayY] = Tileset.PLAYER;
+        }
+    }
+
+    // Deal with the word.
+    private void DealWord(String word) {
+        if(SetUp) {
+            switch (word) {
+                case "n": {
+                    SwitchNewGame();
+                    break;
+                }
+                case "s": {
+                    SetUpNewGame();
+                    break;
+                }
+                default: {
+                    try {
+                        Long.parseLong(word);
+                        Seed+=word;
+                    } catch (NumberFormatException e){
+                        System.out.println("Invaild input given: " + word);
+                        System.exit(0);
+                    }
+                }
+            }
+        } else {
+            switch (word) {
+                case NORTH:
+                case SOUTH:
+                case WEST:
+                case EAST:
+                    Move(word);
+                    break;
+                default:
+            }
+
+        }
+    }
+
+    @Test
+    public void test() {
+
+        TETile[][] World =playWithInputString("N200306Swwwwwwwwwwwwwwwwwwwwwww");
+
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+
+        ter.renderFrame(World);
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine(); // 等待用户按Enter键
+
     }
 }
