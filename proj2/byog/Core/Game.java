@@ -5,8 +5,10 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import byog.lab5.HexWorld;
 import byog.lab5.Pos;
+import edu.princeton.cs.introcs.StdDraw;
 import org.junit.Test;
 
+import java.awt.*;
 import java.util.Scanner;
 
 public class Game {
@@ -32,7 +34,19 @@ public class Game {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        Start();
     }
+
+    private void Start() {
+        MainMeau meau = new MainMeau(WIDTH, HEIGHT);
+        String option = meau.StartGame();
+        option = option.toLowerCase();
+
+        // TODO: Choose one model to begin the game.
+    }
+
+
+
 
     /**
      * Method used for autograding and testing the game code. The input string will be a series
