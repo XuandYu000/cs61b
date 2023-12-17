@@ -15,9 +15,10 @@ public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     private static final int WIDTH = 80;
-    private static final int HEIGHT = 30;
-    private static final int WelcomeWIDTH = 80;
-    private static final int WelcomeHEIGHT = 80;
+    private static final int HEIGHT = 40;
+    private static final int WelcomeWIDTH = 40;
+    private static final int WelcomeHEIGHT = 40;
+    private static final Font SMALL = new Font("Monaco", Font.PLAIN, 20);
     private static final int ENTRYX = 40;
     private static final int ENTRYY = 5;
     private static final String NORTH = "w";
@@ -71,17 +72,28 @@ public class Game {
             DealString(Character.toString(input).toLowerCase());
         }
 
+        KeyboardEvent();
+    }
 
-        // TODO: When you move randomly some of the walls may change into the object @
+    private void KeyboardEvent() {
         while (true) {
             if(StdDraw.hasNextKeyTyped()) {
                 char input = StdDraw.nextKeyTyped();
                 DealString(Character.toString(input).toLowerCase());
                 ter.renderFrame(world);
+                MouseCheck();
             }
         }
     }
 
+    private void MouseCheck() {
+        StdDraw.setPenColor(Color.WHITE);
+        int MouseX = (int) StdDraw.mouseX();
+        int MOuseY = (int) StdDraw.mouseY();
+        StdDraw.text(0.95 * WIDTH, 0.97 * HEIGHT, world[MouseX][MOuseY].description());
+        StdDraw.line(0, 0.95 * HEIGHT, WIDTH, 0.95 * HEIGHT);
+        StdDraw.show();
+    }
 
     /**
      * Method used for autograding and testing the game code. The input string will be a series
@@ -134,6 +146,7 @@ public class Game {
                 }
                 default: {
                     try {
+                        // This helps the try-catch grammar
                         Long.parseLong(word);
                         Seed+=word;
                     } catch (NumberFormatException e){
@@ -176,10 +189,7 @@ public class Game {
             System.exit(0);
         }
         SwitchNewGame();
-
-
         CreatNewWorld();
-
         // Setup finished
         SwitchSetUp();
     }
@@ -187,7 +197,7 @@ public class Game {
     private void CreatNewWorld() {
         // creat the world
         Long seed = Long.parseLong(Seed);
-        WorldGenerator wg = new WorldGenerator(WIDTH, HEIGHT, ENTRYX, ENTRYY, seed);
+        WorldGenerator wg = new WorldGenerator(WIDTH, HEIGHT - 2, ENTRYX, ENTRYY, seed);
         world = wg.generate();
 
         // set up the player
@@ -203,34 +213,37 @@ public class Game {
 
     private boolean Accessible(int x, int y) {
         if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) { return false;}
+
         if(world[x][y].equals(Tileset.WALL)) {return false;}
         return true;
     }
 
     private void Move(String dir) {
-        Position last = new Position(PlayX, PlayY);
-
-        switch (dir){
-            case NORTH :{
-                PlayY ++;
+        int nextX = PlayX;
+        int nextY = PlayY;
+        switch (dir) {
+            case NORTH: {
+                nextY ++;
                 break;
             }
             case SOUTH: {
-                PlayY --;
+                nextY --;
                 break;
             }
             case EAST: {
-                PlayX ++;
+                nextX ++;
                 break;
             }
             case WEST: {
-                PlayX --;
-                break;
+                nextX --;
             }
             default:
         }
-        if(Accessible(PlayX, PlayY)) {
-            world[last.getX()][last.getY()] = Tileset.FLOOR;
+        if(Accessible(nextX, nextY)) {
+            world[PlayX][PlayY] = Tileset.FLOOR;
+            // the next position is accessible so the player moves
+            PlayX = nextX;
+            PlayY = nextY;
             world[PlayX][PlayY] = Tileset.PLAYER;
         }
     }
@@ -238,7 +251,8 @@ public class Game {
     @Test
     public void test() {
 
-        TETile[][] World =playWithInputString("N200306Swwwwwwwwwwwwwwwwwwwwwww");
-
+        TETile[][] World =playWithInputString("N123SWWWWWWWAA");
+        ter.renderFrame(world);
+        StdDraw.pause(10000);
     }
 }
