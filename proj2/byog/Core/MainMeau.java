@@ -19,8 +19,6 @@ public class MainMeau {
 
     public static void main(String[] args) {
         MainMeau meau = new MainMeau(40, 40);
-        String option = meau.StartGame();
-        System.out.println(option);
     }
     public MainMeau(int width, int height) {
         this.width = width;
@@ -32,21 +30,10 @@ public class MainMeau {
         StdDraw.enableDoubleBuffering();
     }
 
-    public String StartGame() {
+    public void StartGame() {
         String title = "CS61B: THE GAME";
         String[] options = {"New Game (N)", "Load Game (L)", "Quit (Q)"};
         drawFrame(title, options);
-        char choice = 'q';
-        if(StdDraw.hasNextKeyTyped()) {
-            choice = StdDraw.nextKeyTyped();
-        }
-        if(Available(Character.toLowerCase(choice))) {
-            return Character.toString(choice);
-        } else {
-            drawFrame("Invalid Input");
-            System.exit(0);
-            return null;
-        }
     }
 
     private void drawFrame(String Title, String[] Options) {
@@ -65,27 +52,5 @@ public class MainMeau {
             StdDraw.text(textWidth * width, textHeight * height, Options[i]);
             textHeight -= 0.05;
         }
-        StdDraw.show();
-        StdDraw.pause(5000);
-    }
-
-    private void drawFrame(String Title) {
-        StdDraw.clear(Color.BLACK);
-
-        // draw title
-        StdDraw.setFont(BIG);
-        StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(0.5 * width, 0.8 * height, Title);
-        StdDraw.show();
-        StdDraw.pause(2500);
-    }
-
-    private boolean Available(Character option) {
-        for(Character choice : AvailableChoice) {
-            if(choice == option) {
-                return true;
-            }
-        }
-        return false;
     }
 }

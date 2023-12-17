@@ -58,9 +58,9 @@ public class WorldGenerator {
         if(positions == null) return null;
         Position bottomLeft = positions[0], topRight = positions[1];
         makeRoom(bottomLeft, topRight);
-        world[initialP.getX()][initialP.getY()] = Tileset.LOCKED_DOOR;
 
         triExit(bottomLeft, topRight, North);
+        world[initialP.getX()][initialP.getY()] = Tileset.LOCKED_DOOR;
 
         return world;
     }

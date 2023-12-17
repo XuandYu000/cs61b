@@ -16,6 +16,8 @@ public class Game {
     /* Feel free to change the width and height. */
     private static final int WIDTH = 80;
     private static final int HEIGHT = 30;
+    private static final int WelcomeWIDTH = 80;
+    private static final int WelcomeHEIGHT = 80;
     private static final int ENTRYX = 40;
     private static final int ENTRYY = 5;
     private static final String NORTH = "w";
@@ -30,6 +32,12 @@ public class Game {
     private int PlayY;
     private String Seed = "";
 
+
+    public static void main(String args[]) {
+        Game game = new Game();
+        game.playWithKeyboard();
+    }
+
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
@@ -38,14 +46,41 @@ public class Game {
     }
 
     private void Start() {
-        MainMeau meau = new MainMeau(WIDTH, HEIGHT);
-        String option = meau.StartGame();
-        option = option.toLowerCase();
-
-        // TODO: Choose one model to begin the game.
+        DisplayMainMeau();
     }
 
+    private void DisplayMainMeau() {
+        MainMeau meau = new MainMeau(WelcomeWIDTH, WelcomeHEIGHT);
+        while(true) {
+            if(StdDraw.hasNextKeyTyped()) {
+                char input = StdDraw.nextKeyTyped();
+                DealString(Character.toString(input).toLowerCase());
+                if(!SetUp) { break;}
+            }
 
+            meau.StartGame();
+
+            if (NewGameMode) {
+                StdDraw.text(0.5 * WelcomeWIDTH, 0.2 * WelcomeHEIGHT, "Your Seed: " + Seed);
+                StdDraw.text(0.5 * WelcomeWIDTH, 0.15 * WelcomeHEIGHT, "Press S to begin the new game!");
+            }
+            StdDraw.show();
+        }
+        while (StdDraw.hasNextKeyTyped()) {
+            char input = StdDraw.nextKeyTyped();
+            DealString(Character.toString(input).toLowerCase());
+        }
+
+
+        // TODO: When you move randomly some of the walls may change into the object @
+        while (true) {
+            if(StdDraw.hasNextKeyTyped()) {
+                char input = StdDraw.nextKeyTyped();
+                DealString(Character.toString(input).toLowerCase());
+                ter.renderFrame(world);
+            }
+        }
+    }
 
 
     /**
@@ -85,75 +120,6 @@ public class Game {
         }
     }
 
-    // This flag tells we are generating a new world.
-    private void SwitchNewGame() {
-        NewGameMode = !NewGameMode;
-    }
-
-    // SetUp finished
-    private void SwitchSetUp() {
-        SetUp = !SetUp;
-    }
-
-    // Finish extracting the random seed and generate the world.
-    private void SetUpNewGame() {
-        if(!NewGameMode) {
-            String error = "Input string " + "\"S\" given, but no game has been initialized.\n"
-                    + "Please initialize game first by input string \"N\" and following random seed"
-                    + "numbers";
-            System.out.println(error);
-            System.exit(0);
-        }
-        SwitchNewGame();
-
-        // creat the world
-        Long seed = Long.parseLong(Seed);
-        WorldGenerator wg = new WorldGenerator(WIDTH, HEIGHT, ENTRYX, ENTRYY, seed);
-        world = wg.generate();
-
-        // set up the player
-        PlayX = ENTRYX;
-        PlayY = ENTRYY + 1;
-        world[PlayX][PlayY] = Tileset.PLAYER;
-
-        // Setup finished
-        SwitchSetUp();
-    }
-
-    private boolean Accessible(int x, int y) {
-        if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) { return false;}
-        if(world[x][y].equals(Tileset.WALL)) {return false;}
-        return true;
-    }
-
-    private void Move(String dir) {
-        Position last = new Position(PlayX, PlayY);
-
-        switch (dir){
-            case NORTH :{
-                PlayY ++;
-                break;
-            }
-            case SOUTH: {
-                PlayY --;
-                break;
-            }
-            case EAST: {
-                PlayX ++;
-                break;
-            }
-            case WEST: {
-                PlayX --;
-                break;
-            }
-            default:
-        }
-        if(Accessible(PlayX, PlayY)) {
-            world[last.getX()][last.getY()] = Tileset.FLOOR;
-            world[PlayX][PlayY] = Tileset.PLAYER;
-        }
-    }
-
     // Deal with the word.
     private void DealWord(String word) {
         if(SetUp) {
@@ -190,17 +156,89 @@ public class Game {
         }
     }
 
-    @Test
-    public void test() {
+    // This flag tells we are generating a new world.
+    private void SwitchNewGame() {
+        NewGameMode = !NewGameMode;
+    }
 
-        TETile[][] World =playWithInputString("N200306Swwwwwwwwwwwwwwwwwwwwwww");
+    // SetUp finished
+    private void SwitchSetUp() {
+        SetUp = !SetUp;
+    }
+
+    // Finish extracting the random seed and generate the world.
+    private void SetUpNewGame() {
+        if(!NewGameMode) {
+            String error = "Input string " + "\"S\" given, but no game has been initialized.\n"
+                    + "Please initialize game first by input string \"N\" and following random seed"
+                    + "numbers";
+            System.out.println(error);
+            System.exit(0);
+        }
+        SwitchNewGame();
+
+
+        CreatNewWorld();
+
+        // Setup finished
+        SwitchSetUp();
+    }
+
+    private void CreatNewWorld() {
+        // creat the world
+        Long seed = Long.parseLong(Seed);
+        WorldGenerator wg = new WorldGenerator(WIDTH, HEIGHT, ENTRYX, ENTRYY, seed);
+        world = wg.generate();
+
+        // set up the player
+        PlayX = ENTRYX;
+        PlayY = ENTRYY + 1;
+        world[PlayX][PlayY] = Tileset.PLAYER;
 
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
 
-        ter.renderFrame(World);
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine(); // 等待用户按Enter键
+        ter.renderFrame(world);
+    }
+
+    private boolean Accessible(int x, int y) {
+        if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) { return false;}
+        if(world[x][y].equals(Tileset.WALL)) {return false;}
+        return true;
+    }
+
+    private void Move(String dir) {
+        Position last = new Position(PlayX, PlayY);
+
+        switch (dir){
+            case NORTH :{
+                PlayY ++;
+                break;
+            }
+            case SOUTH: {
+                PlayY --;
+                break;
+            }
+            case EAST: {
+                PlayX ++;
+                break;
+            }
+            case WEST: {
+                PlayX --;
+                break;
+            }
+            default:
+        }
+        if(Accessible(PlayX, PlayY)) {
+            world[last.getX()][last.getY()] = Tileset.FLOOR;
+            world[PlayX][PlayY] = Tileset.PLAYER;
+        }
+    }
+
+    @Test
+    public void test() {
+
+        TETile[][] World =playWithInputString("N200306Swwwwwwwwwwwwwwwwwwwwwww");
 
     }
 }
