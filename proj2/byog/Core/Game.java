@@ -18,7 +18,6 @@ public class Game {
     private static final int HEIGHT = 40;
     private static final int WelcomeWIDTH = 40;
     private static final int WelcomeHEIGHT = 40;
-    private static final Font SMALL = new Font("Monaco", Font.PLAIN, 20);
     private static final int ENTRYX = 40;
     private static final int ENTRYY = 5;
     private static final String NORTH = "w";
@@ -73,12 +72,12 @@ public class Game {
                 char input = StdDraw.nextKeyTyped();
                 DealString(Character.toString(input).toLowerCase());
                 ter.renderFrame(world);
-                MouseCheck();
+                ShowTileOnHover();
             }
         }
     }
 
-    private void MouseCheck() {
+    private void ShowTileOnHover() {
         StdDraw.setPenColor(Color.WHITE);
         int MouseX = (int) StdDraw.mouseX();
         int MOuseY = (int) StdDraw.mouseY();
