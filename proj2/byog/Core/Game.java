@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.Scanner;
 
 public class Game {
-    TERenderer ter = new TERenderer();
+    private TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     private static final int WIDTH = 80;
     private static final int HEIGHT = 40;
@@ -43,11 +43,8 @@ public class Game {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
-        Start();
-    }
-
-    private void Start() {
         DisplayMainMeau();
+        KeyboardEvent();
     }
 
     private void DisplayMainMeau() {
@@ -67,12 +64,7 @@ public class Game {
             }
             StdDraw.show();
         }
-        while (StdDraw.hasNextKeyTyped()) {
-            char input = StdDraw.nextKeyTyped();
-            DealString(Character.toString(input).toLowerCase());
-        }
 
-        KeyboardEvent();
     }
 
     private void KeyboardEvent() {
@@ -205,9 +197,7 @@ public class Game {
         PlayY = ENTRYY + 1;
         world[PlayX][PlayY] = Tileset.PLAYER;
 
-        TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-
         ter.renderFrame(world);
     }
 
