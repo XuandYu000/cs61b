@@ -5,11 +5,9 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import byog.lab5.HexWorld;
 import byog.lab5.Pos;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import edu.princeton.cs.introcs.StdDraw;
 import org.junit.Test;
 
-import javax.rmi.CORBA.Tie;
 import java.awt.*;
 import java.io.*;
 import java.util.Scanner;

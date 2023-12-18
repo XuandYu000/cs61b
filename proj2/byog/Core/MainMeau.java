@@ -1,6 +1,5 @@
 package byog.Core;
 import edu.princeton.cs.introcs.StdDraw;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.awt.Color;
 import java.awt.Font;
