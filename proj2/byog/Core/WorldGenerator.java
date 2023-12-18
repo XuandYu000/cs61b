@@ -1,12 +1,11 @@
 package byog.Core;
 
+import byog.SaveDemo.World;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-import byog.lab5.Pos;
 import org.junit.Test;
 
-import java.nio.channels.Pipe;
 import java.util.*;
 
 /**
@@ -280,16 +279,4 @@ public class WorldGenerator {
         }
     }
 
-    public static void main(String args[]) {
-        int w = 60;
-        int h = 60;
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        TERenderer ter = new TERenderer();
-        ter.initialize(w, h);
-        WorldGenerator wg = new WorldGenerator(w, h, 40, 5, 42);
-        wg.generate();
-
-        // draw the world to the screen
-        ter.renderFrame(wg.world);
-    }
 }
