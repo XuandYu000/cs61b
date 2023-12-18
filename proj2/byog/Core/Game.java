@@ -5,10 +5,13 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import byog.lab5.HexWorld;
 import byog.lab5.Pos;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import edu.princeton.cs.introcs.StdDraw;
 import org.junit.Test;
 
+import javax.rmi.CORBA.Tie;
 import java.awt.*;
+import java.io.*;
 import java.util.Scanner;
 
 public class Game {
@@ -16,6 +19,8 @@ public class Game {
     /* Feel free to change the width and height. */
     private static final int WIDTH = 80;
     private static final int HEIGHT = 40;
+    private static final int GAMEWIDTH = 80;
+    private static final int GAMEHEIGHT = HEIGHT - 2;
     private static final int WelcomeWIDTH = 40;
     private static final int WelcomeHEIGHT = 40;
     private static final int ENTRYX = 40;
@@ -24,13 +29,16 @@ public class Game {
     private static final String EAST = "d";
     private static final String WEST = "a";
     private static final String SOUTH = "s";
+    private static final String PATH = "saved.txt";
 
     private TETile[][] world;
     private boolean SetUp = true;
     private boolean NewGameMode = false;
+    private boolean QuitMode = false;
     private int PlayX;
     private int PlayY;
     private String Seed = "";
+
 
 
     public static void main(String args[]) {
@@ -43,6 +51,7 @@ public class Game {
      */
     public void playWithKeyboard() {
         DisplayMainMeau();
+
         KeyboardEvent();
     }
 
@@ -51,7 +60,7 @@ public class Game {
         while(true) {
             if(StdDraw.hasNextKeyTyped()) {
                 char input = StdDraw.nextKeyTyped();
-                DealString(Character.toString(input).toLowerCase());
+                DealWord(Character.toString(input).toLowerCase());
                 if(!SetUp) { break;}
             }
 
@@ -135,6 +144,14 @@ public class Game {
                     SetUpNewGame();
                     break;
                 }
+                case "l": {
+                    Load();
+                    break;
+                }
+                case "q": {
+                    System.exit(0);
+                    break;
+                }
                 default: {
                     try {
                         // This helps the try-catch grammar
@@ -154,6 +171,14 @@ public class Game {
                 case EAST:
                     Move(word);
                     break;
+                case ":": {
+                    SwitchQuit();
+                    break;
+                }
+                case "q": {
+                    QuitAndSave();
+                    break;
+                }
                 default:
             }
 
@@ -168,6 +193,11 @@ public class Game {
     // SetUp finished
     private void SwitchSetUp() {
         SetUp = !SetUp;
+    }
+
+    // When pressed ":", you can quit if you press "q" then.
+    private void SwitchQuit() {
+        QuitMode = !QuitMode;
     }
 
     // Finish extracting the random seed and generate the world.
@@ -186,9 +216,13 @@ public class Game {
     }
 
     private void CreatNewWorld() {
-        // creat the world
-        Long seed = Long.parseLong(Seed);
-        WorldGenerator wg = new WorldGenerator(WIDTH, HEIGHT - 2, ENTRYX, ENTRYY, seed);
+        WorldGenerator wg;
+        if(Seed.equals("")) {
+            wg = new WorldGenerator(GAMEWIDTH, GAMEHEIGHT, ENTRYX, ENTRYY);
+        } else {
+            Long seed = Long.parseLong(Seed);
+            wg = new WorldGenerator(GAMEWIDTH, GAMEHEIGHT, ENTRYX, ENTRYY, seed);
+        }
         world = wg.generate();
 
         // set up the player
@@ -202,8 +236,7 @@ public class Game {
 
     private boolean Accessible(int x, int y) {
         if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) { return false;}
-
-        if(world[x][y].equals(Tileset.WALL)) {return false;}
+        if(world[x][y].equals(Tileset.WALL) || world[x][y].equals(Tileset.LOCKED_DOOR)) {return false;}
         return true;
     }
 
@@ -237,11 +270,74 @@ public class Game {
         }
     }
 
+    private void QuitAndSave() {
+        if(!QuitMode) {
+            return;
+        }
+        SwitchQuit();
+        File f = new File(PATH);
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(f);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(world);
+            os.close();
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(1);
+        }
+        System.exit(0);
+    }
+
+    // Load a previously saved game. If no saved found, returns null
+    private TETile[][] Load() {
+        File f = new File(PATH);
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            world = (TETile[][]) ois.readObject();
+            ois.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("No previously saved world found.");
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(1);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class TETile[][] not found.");
+            System.exit(1);
+        }
+
+        SwitchSetUp();
+
+        RewritePlayerLocation();
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(world);
+
+        return world;
+    }
+
+    private void RewritePlayerLocation() {
+        for(int i = 0; i < GAMEWIDTH; i ++) {
+            // It is annoying I must figure out the HEIGHT must decrease by 2 for the hover. So I add the 2 variables
+            for(int j = 0; j < GAMEHEIGHT; j++) {
+                if(world[i][j].equals(Tileset.PLAYER)) {
+                    PlayX = i;
+                    PlayY = j;
+                    return;
+                }
+            }
+        }
+    }
+
     @Test
     public void test() {
-
-        TETile[][] World =playWithInputString("N123SWWWWWWWAA");
-        ter.renderFrame(world);
+        TETile[][] World =playWithInputString("L");
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(World);
         StdDraw.pause(10000);
+
     }
 }
