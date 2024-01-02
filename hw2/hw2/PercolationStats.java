@@ -17,6 +17,12 @@ public class PercolationStats {
 
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T, PercolationFactory pf) {
+        if (N <= 0) {
+            throw new IllegalArgumentException("N should be greater than 0.");
+        }
+        if(T <= 0) {
+            throw new IllegalArgumentException("T should be greater than 0.");
+        }
         this.N = N;
         this.T = T;
         this.pf = pf;
@@ -25,7 +31,7 @@ public class PercolationStats {
         simulate(T);
     }
 
-    public void simulate(int T) {
+    private void simulate(int T) {
         for(int i = 0; i < T; i++) {
             Percolation expr = pf.make(N);
             while(!expr.percolates()) {
