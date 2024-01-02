@@ -33,7 +33,7 @@ public class Percolation {
     }
 
     private void validate(int row, int col) {
-       if(row < 0 || row >= Length || col < 0 || col >= Length) {
+       if (row < 0 || row >= Length || col < 0 || col >= Length) {
            throw new IndexOutOfBoundsException("Index row or col is not between 0 and N - 1");
        }
     }
