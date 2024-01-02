@@ -27,13 +27,8 @@ public class Percolation {
         VirtualBottom = N * N + 1;
         DSet = new WeightedQuickUnionUF(N * N + 2);
         DSetWithoutVB = new WeightedQuickUnionUF(N * N + 1);
-
-        // connect all top blocks with VirtualTop, connect all bottom blocks with VirtualBottom
-        for(int i = 0; i < N; i++) {
-            DSet.union(VirtualTop, ChangeToLine(0, i));
+        for (int i = 0; i < N; i++) {
             DSet.union(VirtualBottom, ChangeToLine(N - 1, i));
-
-            DSetWithoutVB.union(VirtualTop, ChangeToLine(0,i));
         }
     }
 
@@ -46,6 +41,37 @@ public class Percolation {
     private void validate(int N) {
         if(N < 0) {
             throw new IllegalArgumentException("N should be positive.");
+        }
+    }
+
+    private boolean cheakIn(int row, int col) {
+        if(row < 0 || row >= Length || col < 0 || col >= Length) {
+            return false;
+        }
+        return true;
+    }
+
+    private void Connect(int p, int q) {
+        if(!percolates()) {
+            DSet.union(p, q);
+        }
+        DSetWithoutVB.union(p, q);
+    }
+
+    private void UpdateUpConnection(int row, int col, int nearR, int nearC) {
+        if(!cheakIn(nearR, nearC)) {
+            Connect(ChangeToLine(row, col), VirtualTop);
+        } else {
+            if(isOpen(nearR, nearC)) {
+                Connect(ChangeToLine(row, col), ChangeToLine(nearR, nearC));
+            }
+        }
+    }
+
+    private void UpdateOtherConnection(int row, int col, int nearR, int nearC) {
+        if(!cheakIn(nearR, nearC)) { return;}
+        if(isOpen(nearR, nearC)) {
+            Connect(ChangeToLine(row, col), ChangeToLine(nearR, nearC));
         }
     }
 
@@ -64,15 +90,19 @@ public class Percolation {
 
             // If the nearby blocks is open, this block should union
             for(int i = 0; i < 4; i ++) {
-                int nearX = row + dx[i];
-                int nearY = col + dy[i];
-                if(nearX < 0 || nearX >= Length || nearY < 0 || nearY >= Length) {continue;}
-                if(isOpen(nearX, nearY)) {
-                    if(!percolates()) {
-                        DSet.union(ChangeToLine(nearX, nearY), ChangeToLine(row, col));
-                    }
-                    DSetWithoutVB.union(ChangeToLine(nearX, nearY), ChangeToLine(row, col));
+                int nearR = row + dx[i];
+                int nearC = col + dy[i];
+                if(dx[i] == -1) {UpdateUpConnection(row, col, nearR, nearC);}
+                else {
+                    UpdateOtherConnection(row, col, nearR, nearC);
                 }
+//                if(nearX < 0 || nearX >= Length || nearY < 0 || nearY >= Length) {continue;}
+//                if(isOpen(nearX, nearY)) {
+//                    if(!percolates()) {
+//                        DSet.union(ChangeToLine(nearX, nearY), ChangeToLine(row, col));
+//                    }
+//                    DSetWithoutVB.union(ChangeToLine(nearX, nearY), ChangeToLine(row, col));
+//                }
             }
         }
     }
