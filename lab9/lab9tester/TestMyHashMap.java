@@ -127,6 +127,20 @@ public class TestMyHashMap {
         assertEquals(studentIDs.get("evil alan"), studentIDs.get("alan"));
     }
 
+    @Test
+    public void sanityRemoveTest() {
+        MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
+        assertEquals(0, b.size());
+        b.put("hi", 1);
+        assertEquals(1, b.size());
+        for (int i = 0; i < 455; i++) {
+            b.put("hi" + i, 1);
+        }
+        assertEquals(456, b.size());
+        b.remove("hi");
+        assertEquals(455, b.size());
+    }
+
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestMyHashMap.class);
     }
