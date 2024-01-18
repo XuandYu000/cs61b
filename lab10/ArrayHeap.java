@@ -1,4 +1,7 @@
 import org.junit.Test;
+
+import java.util.NoSuchElementException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -41,6 +44,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      * Returns the index of the node that is the parent of the node at i.
      */
     private static int parentIndex(int i) {
+        if (i == 1) {
+            throw new IllegalArgumentException("root node has no parent");
+        }
         return (i >> 1);
     }
 
@@ -104,9 +110,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        while (inBounds(parentIndex(index)) && min(index, parentIndex(index)) == index) {
+        if (index == 1){
+            return;
+        }
+        if(min(index, parentIndex(index)) == index) {
             swap(index, parentIndex(index));
-            index = parentIndex(index);
+            swim(parentIndex(index));
         }
         return;
     }
@@ -115,15 +124,16 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      * Bubbles down the node currently at the given index.
      */
     private void sink(int index) {
+        if (!inBounds(index)) {
+            return;
+        }
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        while (inBounds(leftIndex(index))) {
-            int Min = min(leftIndex(index), rightIndex(index));
-            if(min(Min, index) == Min) {
-                swap(Min, index);
-                index = Min;
-            } else break;
+        int minChild = min(leftIndex(index), rightIndex(index));
+        if(min(index, minChild) == minChild) {
+            swap(index, minChild);
+            sink(minChild);
         }
         return;
     }
@@ -150,6 +160,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T peek() {
+        if (size == 0) {
+            throw new NoSuchElementException("heap is empty");
+        }
         return contents[1].myItem;
     }
 
@@ -169,6 +182,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         swap(1, size);
         size --;
         sink(1);
+        contents[size + 1] = null;
         return removed;
     }
 
@@ -193,7 +207,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     public void changePriority(T item, double priority) {
         int index = 0;
         for (int i = 1; i <= size; i++) {
-            if(item.equals(contents[i].myItem)) {
+            if(item.equals(contents[i].item())) {
                 index = i;
                 contents[i].myPriority = priority;
                 break;
