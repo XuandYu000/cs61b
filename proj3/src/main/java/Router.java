@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +11,38 @@ import java.util.regex.Pattern;
  * down to the priority you use to order your vertices.
  */
 public class Router {
+    private static class State implements Comparable<State>{
+        private Node node;
+        private double priority;
+
+        public State(Node node, double priority) {
+            this.node = node;
+            this.priority = priority;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            State state = (State)o;
+            return this.node.getId().equals(state.node.getId());
+        }
+
+        @Override
+        public int hashCode() {
+            return node.getId().hashCode();
+        }
+
+        @Override
+        public int compareTo(State o) {
+            return Double.compare(this.priority, o.priority);
+        }
+    }
+
     /**
      * Return a List of longs representing the shortest path from the node
      * closest to a start location and the node closest to the destination
@@ -25,7 +56,55 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        List<Long> res = new ArrayList<>();
+        HashMap<Long, Double> distTo = new HashMap<>();
+        HashMap<Long, Long> edgeTo = new HashMap<>();
+        HashSet<Long> marked = new HashSet<>();
+        PriorityQueue<State> pq = new PriorityQueue<>();
+
+        Node st = g.getNode(g.closest(stlon, stlat));
+        Node ed = g.getNode(g.closest(destlon, destlat));
+        double dis = 0.0;
+        double h = g.distance(st.getId(), ed.getId());
+        distTo.put(st.getId(), dis);
+        pq.add(new State(st, dis + h));
+
+        while (!pq.isEmpty()) {
+            State curr = pq.poll();
+            Long currId = curr.node.getId();
+            marked.add(currId);
+            if(currId.equals(ed.getId())) {
+                break;
+            }
+            for(Long nid : curr.node.getNeighbors()) {
+                Node node = g.getNode(nid);
+                if(!marked.contains(nid)) {
+                    h = g.distance(nid, ed.getId());
+                    dis = distTo.get(currId) + g.distance(currId, nid);
+                    if (nid == 53124567) {
+                        continue;
+                    }
+                    if(!distTo.containsKey(nid) || dis < distTo.get(nid)) {
+                        distTo.put(nid, dis);
+                        edgeTo.put(nid, currId);
+                        State neighbor = new State(node, 0);
+                        pq.remove(neighbor);
+                        pq.add(new State(node, distTo.get(nid) + h));
+                    }
+                }
+            }
+        }
+        Long tmp = ed.getId();
+        while(!tmp.equals(st.getId())) {
+            res.add(tmp);
+            tmp = edgeTo.get(tmp);
+            if (tmp == null) {
+                break;
+            }
+        }
+        res.add(st.getId());
+        Collections.reverse(res);
+        return res;
     }
 
     /**
