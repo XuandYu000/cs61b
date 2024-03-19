@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Queue;
+import org.knowm.xchart.BitmapEncoder;
 
 public class MergeSort {
     /**
@@ -35,7 +36,13 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> que = new Queue<>();
+        for (Item item : items) {
+            Queue<Item> q = new Queue<>();
+            q.enqueue(item);
+            que.enqueue(q);
+        }
+        return que;
     }
 
     /**
@@ -54,13 +61,39 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> res = new Queue<>();
+        while(!q1.isEmpty() || !q2.isEmpty()) {
+            res.enqueue(getMin(q1, q2));
+        }
+        return res;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        if (items.size() <= 1) {return items; }
+        Queue<Queue<Item>> tmp = makeSingleItemQueues(items);
+        while (tmp.size() != 1){
+            Queue<Queue<Item>> tmpp = new Queue<>();
+            while (!tmp.isEmpty()) {
+                Queue<Item> q1 = tmp.dequeue();
+                Queue<Item> q2 = tmp.isEmpty() ? new Queue<>() : tmp.dequeue();
+                tmpp.enqueue(mergeSortedQueues(q1, q2));
+            }
+            tmp = tmpp;
+        }
+        return tmp.dequeue();
+    }
+
+    public static void main(String[] args) {
+        Queue<String> q = new Queue<>();
+        q.enqueue("Cat");
+        q.enqueue("Pig");
+        q.enqueue("Ant");
+        q.enqueue("Hello");
+        q.enqueue("Orange");
+        Queue<String> sortedQueue = MergeSort.mergeSort(q);
+        System.out.println(q);
+        System.out.println(sortedQueue);
     }
 }

@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
 public class QuickSort {
@@ -47,13 +48,59 @@ public class QuickSort {
     private static <Item extends Comparable> void partition(
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
-        // Your code here!
+        for (Item item : unsorted) {
+            int cmp = pivot.compareTo(item);
+            if (cmp > 0) {
+                less.enqueue(item);
+            } else if (cmp < 0) {
+                greater.enqueue(item);
+            } else {
+                equal.enqueue(item);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        Item pivot = getRandomItem(items);
+        Queue<Item> less = new Queue<>();
+        Queue<Item> equal = new Queue<>();
+        Queue<Item> greater = new Queue<>();
+        partition(items, pivot, less, equal, greater);
+        if (!less.isEmpty()) {
+            quickSort(less);
+        }
+        if(!greater.isEmpty()) {
+            quickSort(greater);
+        }
+        return catenate(catenate(less, equal), greater);
+    }
+
+    public static void main(String[] args) {
+//        Queue<String> q = new Queue<>();
+//        q.enqueue("Cat");
+//        q.enqueue("Pig");
+//        q.enqueue("Ant");
+//        q.enqueue("Hello");
+//        q.enqueue("Orange");
+//        Queue<String> sortedQueue = MergeSort.mergeSort(q);
+//        System.out.println(q);
+//        System.out.println(sortedQueue);
+//        1 2 0 1 2 4 4 5 9 7
+        Queue<Integer> q = new Queue<>();
+        q.enqueue(1);
+        q.enqueue(2);
+        q.enqueue(0);
+        q.enqueue(1);
+        q.enqueue(2);
+        q.enqueue(4);
+        q.enqueue(4);
+        q.enqueue(5);
+        q.enqueue(9);
+        q.enqueue(7);
+        Queue<Integer> sortedQueue = MergeSort.mergeSort(q);
+        System.out.println(q);
+        System.out.println(sortedQueue);
     }
 }
