@@ -1,3 +1,7 @@
+import edu.princeton.cs.introcs.In;
+
+import java.util.HashMap;
+
 /**
  * Class with 2 ways of doing Counting sort, one naive way and one "better" way
  *
@@ -66,17 +70,40 @@ public class CountingSort {
      * @param arr int array that will be sorted
      */
     public static int[] betterCountingSort(int[] arr) {
-        int MIN = Integer.MAX_VALUE;
-        for (int item : arr) {
-            MIN = MIN > item ? item : MIN;
+        int min = 0;
+        int max = 0;
+        for (int i : arr) {
+            min = (i < 0 && i < min) ? i : min;
+            max = (i > 0 && i > max) ? i : max;
         }
-        for (int i = 0, siz = arr.length; i < siz; i++) {
-            arr[i] -= MIN;
+        int[] negativecount, positivecount;
+        negativecount = new int[Math.abs(min) + 1];
+        positivecount = new int[max + 1];
+        for (int i : arr) {
+            if (i < 0) {
+                negativecount[-1 * i] += 1;
+            } else {
+                positivecount[i] += 1;
+            }
         }
-        int[] sorted = naiveCountingSort(arr);
-        for (int i = 0, siz = arr.length; i < siz; i++) {
-            arr[i] += MIN;
-            sorted[i] += MIN;
+        int[] negativestart = new int[Math.abs(min) + 1];
+        int[] positivestart = new int[max + 1];
+        int pos = 0;
+        for (int i = -1 * min; i > 0; i--) {
+            negativestart[i] = pos;
+            pos += negativecount[i];
+        }
+        for (int i = 0; i <= max; i++) {
+            positivestart[i] = pos;
+            pos += positivecount[i];
+        }
+        int[] sorted = new int[arr.length];
+        for (int i : arr) {
+            if (i < 0) {
+                sorted[negativestart[-1 * i]++] = i;
+            } else {
+                sorted[positivestart[i]++] = i;
+            }
         }
         return sorted;
     }
