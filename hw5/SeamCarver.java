@@ -3,8 +3,7 @@
  * @Date: 2024/3/20 下午9:27
  */
 import edu.princeton.cs.algs4.Picture;
-
-import java.awt.*;
+import java.awt.Color;
 
 public class SeamCarver {
     private Picture pic;
@@ -25,11 +24,12 @@ public class SeamCarver {
         this.rgb = new int[this.Width][this.Height][3];
         for (int i = 0; i < Width; i++) {
             for(int j = 0; j < Height; j++) {
-                int color = picture.getRGB(i, j);
-                Col[i][j] = color;
-                rgb[i][j][0] = (color >> 16) & 0xff;
-                rgb[i][j][1] = (color >> 8) & 0xff;
-                rgb[i][j][2] = color & 0xff;
+//                int color = picture.getRGB(i, j);
+                Color color = picture.get(i, j);
+                Col[i][j] = color.getRGB();
+                rgb[i][j][0] = color.getRed();
+                rgb[i][j][1] = color.getGreen();
+                rgb[i][j][2] = color.getBlue();
             }
         }
         energy = cal_energy(rgb);
@@ -184,7 +184,8 @@ public class SeamCarver {
                     offset = -1;
                     continue;
                 }
-                newPic.setRGB(col, row + offset, Col[col][row]);
+//                newPic.setRGB(col, row + offset, Col[col][row]);
+                newPic.set(col, row + offset, pic.get(col, row));
             }
         }
         this.pic = newPic;
@@ -195,7 +196,6 @@ public class SeamCarver {
             throw new java.lang.IllegalArgumentException("Passed in seam is not legal");
         }
         Picture newPic = new Picture(width() - 1, height());
-        for (int j = 0; j <height(); j++) {
         for (int row = 0; row < pic.height(); row ++) {
             int offset = 0;
             for (int col = 0;  col < pic.width(); col ++) {
@@ -203,10 +203,11 @@ public class SeamCarver {
                     offset = -1;
                     continue;
                 }
-                newPic.setRGB(col + offset, row, Col[col][row]);
-            }
+//                newPic.setRGB(col + offset, row, Col[col][row]);
+                newPic.set(col + offset, row, pic.get(col, row));
             }
         }
+
         this.pic = newPic;
         setInial(this.pic);
     }     // remove vertical seam from picture
