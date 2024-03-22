@@ -1,9 +1,6 @@
 package creatures;
-import huglife.Creature;
-import huglife.Direction;
-import huglife.Action;
-import huglife.Occupant;
-import huglife.HugLifeUtils;
+import huglife.*;
+
 import java.awt.Color;
 import java.util.Map;
 import java.util.List;
@@ -20,12 +17,16 @@ public class Plip extends Creature {
     /** blue color. */
     private int b;
 
+    private static final double moveEnergyLost = 0.15;
+    private static final double stayEnergyGained = 0.2;
+    private static final double energyLimit = 2.0;
+
     /** creates plip with energy equal to E. */
     public Plip(double e) {
         super("plip");
-        r = 0;
-        g = 0;
-        b = 0;
+        r = 99;
+        g = 63;
+        b = 76;
         energy = e;
     }
 
@@ -42,7 +43,7 @@ public class Plip extends Creature {
      *  that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        g = (int) (63 + (255 - 63) / energyLimit * energy);
         return color(r, g, b);
     }
 
@@ -55,11 +56,13 @@ public class Plip extends Creature {
      *  private static final variable. This is not required for this lab.
      */
     public void move() {
+        energy -= moveEnergyLost;
     }
 
 
     /** Plips gain 0.2 energy when staying due to photosynthesis. */
     public void stay() {
+        energy = energy + stayEnergyGained >= energyLimit ? energyLimit : energy + stayEnergyGained;
     }
 
     /** Plips and their offspring each get 50% of the energy, with none
@@ -67,7 +70,8 @@ public class Plip extends Creature {
      *  Plip.
      */
     public Plip replicate() {
-        return this;
+        energy /= 2;
+        return new Plip(energy);
     }
 
     /** Plips take exactly the following actions based on NEIGHBORS:
@@ -81,7 +85,20 @@ public class Plip extends Creature {
      *  for an example to follow.
      */
     public Action chooseAction(Map<Direction, Occupant> neighbors) {
-        return new Action(Action.ActionType.STAY);
+        List<Direction> empties = getNeighborsOfType(neighbors, "empty");
+        List<Direction> clorus = getNeighborsOfType(neighbors, "clorus");
+
+        if (empties.size() == 0) {
+            return new Action(Action.ActionType.STAY);
+        } else if (energy > 1) {
+            Direction moveDir = HugLifeUtils.randomEntry(empties);
+            return new Action(Action.ActionType.REPLICATE, moveDir);
+        } else if (!clorus.isEmpty() && HugLifeUtils.random() > 0.5) {
+            Direction moveDir = HugLifeUtils.randomEntry(empties);
+            return new Action(Action.ActionType.MOVE, moveDir);
+        } else {
+            return new Action(Action.ActionType.STAY);
+        }
     }
 
 }
